@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uji Normalitas Data</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 15px 25px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .tab:hover {
+            background: #e0e0e0;
+            transform: translateY(-2px);
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border-left: 5px solid #667eea;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .card p {
+            line-height: 1.8;
+            color: #333;
+        }
+
+        .interactive-demo {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid #667eea;
+            margin-top: 20px;
+        }
+
+        .demo-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .demo-controls button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .demo-controls button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        canvas {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: white;
+            max-width: 100%;
+        }
+
+        .formula {
+            background: #fff3cd;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 5px solid #ffc107;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+            text-align: center;
+        }
+
+        .info-box {
+            background: #d1ecf1;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 5px solid #17a2b8;
+        }
+
+        .warning-box {
+            background: #f8d7da;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 5px solid #dc3545;
+        }
+
+        ul {
+            margin-left: 20px;
+            line-height: 2;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .comparison-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+
+        .comparison-table td {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .comparison-table tr:hover {
+            background: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 Uji Normalitas Data</h1>
+            <p class="subtitle">Memahami Konsep dan Aplikasi Uji Normalitas dalam Statistika</p>
+        </header>
+
+        <div class="content">
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('pengertian')">Pengertian</button>
+                <button class="tab" onclick="showTab('tujuan')">Tujuan & Manfaat</button>
+                <button class="tab" onclick="showTab('metode')">Metode Uji</button>
+                <button class="tab" onclick="showTab('interpretasi')">Interpretasi</button>
+                <button class="tab" onclick="showTab('demo')">Demo Interaktif</button>
+            </div>
+
+            <div id="pengertian" class="tab-content active">
+                <div class="card">
+                    <h3>🎯 Apa itu Uji Normalitas?</h3>
+                    <p>Uji normalitas adalah prosedur statistik yang digunakan untuk menguji apakah data yang dimiliki berdistribusi normal atau tidak. Distribusi normal (disebut juga distribusi Gaussian) adalah distribusi probabilitas yang berbentuk lonceng simetris di mana nilai mean, median, dan modus berada pada titik yang sama.</p>
+                </div>
+
+                <div class="card">
+                    <h3>📈 Karakteristik Distribusi Normal</h3>
+                    <ul>
+                        <li><strong>Simetris:</strong> Bentuk kurva simetris terhadap mean</li>
+                        <li><strong>Unimodal:</strong> Memiliki satu puncak tertinggi</li>
+                        <li><strong>Mean = Median = Modus:</strong> Ketiga ukuran pemusatan berada di tengah</li>
+                        <li><strong>Asimtotik:</strong> Kurva mendekati sumbu X tapi tidak pernah menyentuhnya</li>
+                        <li><strong>Luas area = 1:</strong> Total probabilitas di bawah kurva adalah 100%</li>
+                    </ul>
+                </div>
+
+                <div class="info-box">
+                    <strong>💡 Tahukah Anda?</strong><br>
+                    Distribusi normal ditemukan oleh Carl Friedrich Gauss, sehingga sering disebut Distribusi Gaussian. Distribusi ini sangat penting dalam statistik karena banyak fenomena alam dan sosial mengikuti pola ini.
+                </div>
+            </div>
+
+            <div id="tujuan" class="tab-content">
+                <div class="card">
+                    <h3>🎯 Tujuan Uji Normalitas</h3>
+                    <ul>
+                        <li>Mengetahui apakah data yang dikumpulkan berdistribusi normal</li>
+                        <li>Memenuhi asumsi untuk analisis statistik parametrik</li>
+                        <li>Menentukan metode analisis yang tepat (parametrik vs non-parametrik)</li>
+                        <li>Meningkatkan validitas hasil penelitian</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3>✅ Manfaat Uji Normalitas</h3>
+                    <ul>
+                        <li><strong>Pemilihan Metode Analisis:</strong> Menentukan apakah menggunakan uji parametrik atau non-parametrik</li>
+                        <li><strong>Validitas Hasil:</strong> Memastikan hasil analisis lebih akurat dan dapat dipercaya</li>
+                        <li><strong>Deteksi Outlier:</strong> Membantu mengidentifikasi data yang tidak wajar</li>
+                        <li><strong>Keputusan Statistik:</strong> Dasar untuk melakukan uji hipotesis yang tepat</li>
+                    </ul>
+                </div>
+
+                <div class="warning-box">
+                    <strong>⚠️ Penting!</strong><br>
+                    Jika data tidak berdistribusi normal, Anda harus menggunakan uji statistik non-parametrik seperti Mann-Whitney U Test, Kruskal-Wallis, atau Wilcoxon Signed Rank Test.
+                </div>
+            </div>
+
+            <div id="metode" class="tab-content">
+                <div class="card">
+                    <h3>📊 Metode Uji Normalitas</h3>
+                    
+                    <h4 style="color: #667eea; margin-top: 20px;">1. Uji Shapiro-Wilk</h4>
+                    <p>Metode ini sangat populer untuk sampel kecil (n < 50) dan memiliki power test yang tinggi.</p>
+                    <div class="formula">
+                        W = (Σaᵢxᵢ)² / Σ(xᵢ - x̄)²
+                    </div>
+                    <p><strong>Kelebihan:</strong> Sangat sensitif dan akurat untuk sampel kecil</p>
+                    <p><strong>Kekurangan:</strong> Kurang efektif untuk sampel sangat besar (n > 2000)</p>
+
+                    <h4 style="color: #667eea; margin-top: 30px;">2. Uji Kolmogorov-Smirnov</h4>
+                    <p>Membandingkan distribusi data dengan distribusi normal standar.</p>
+                    <div class="formula">
+                        D = max|Fₒ(x) - Fₑ(x)|
+                    </div>
+                    <p><strong>Kelebihan:</strong> Dapat digunakan untuk sampel besar</p>
+                    <p><strong>Kekurangan:</strong> Kurang powerful dibanding Shapiro-Wilk</p>
+
+                    <h4 style="color: #667eea; margin-top: 30px;">3. Uji Anderson-Darling</h4>
+                    <p>Modifikasi dari Kolmogorov-Smirnov yang memberikan bobot lebih pada ekor distribusi.</p>
+                    <p><strong>Kelebihan:</strong> Lebih sensitif terhadap deviasi di ekor distribusi</p>
+
+                    <h4 style="color: #667eea; margin-top: 30px;">4. Uji Lilliefors</h4>
+                    <p>Variasi dari uji Kolmogorov-Smirnov ketika parameter mean dan standar deviasi tidak diketahui.</p>
+                </div>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Metode</th>
+                            <th>Ukuran Sampel</th>
+                            <th>Power Test</th>
+                            <th>Penggunaan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Shapiro-Wilk</td>
+                            <td>n < 50</td>
+                            <td>Tinggi</td>
+                            <td>Paling direkomendasikan</td>
+                        </tr>
+                        <tr>
+                            <td>Kolmogorov-Smirnov</td>
+                            <td>n > 50</td>
+                            <td>Sedang</td>
+                            <td>Sampel besar</td>
+                        </tr>
+                        <tr>
+                            <td>Anderson-Darling</td>
+                            <td>Semua ukuran</td>
+                            <td>Tinggi</td>
+                            <td>Fokus pada ekor distribusi</td>
+                        </tr>
+                        <tr>
+                            <td>Lilliefors</td>
+                            <td>n ≥ 30</td>
+                            <td>Sedang-Tinggi</td>
+                            <td>Parameter tidak diketahui</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="interpretasi" class="tab-content">
+                <div class="card">
+                    <h3>🔍 Cara Interpretasi Hasil</h3>
+                    
+                    <h4 style="color: #667eea; margin-top: 20px;">Berdasarkan Nilai P-value:</h4>
+                    <div class="info-box">
+                        <p><strong>H₀ (Hipotesis Nol):</strong> Data berdistribusi normal</p>
+                        <p><strong>H₁ (Hipotesis Alternatif):</strong> Data tidak berdistribusi normal</p>
+                    </div>
+
+                    <p style="margin: 20px 0;"><strong>Aturan Keputusan:</strong></p>
+                    <ul>
+                        <li><strong>Jika p-value > α (0.05):</strong> Gagal tolak H₀ → Data berdistribusi normal ✅</li>
+                        <li><strong>Jika p-value ≤ α (0.05):</strong> Tolak H₀ → Data tidak berdistribusi normal ❌</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h4 style="color: #667eea;">Metode Visual:</h4>
+                    
+                    <h5 style="margin-top: 15px;">1. Histogram</h5>
+                    <p>Amati apakah bentuk distribusi menyerupai lonceng yang simetris.</p>
+
+                    <h5 style="margin-top: 15px;">2. Q-Q Plot (Quantile-Quantile Plot)</h5>
+                    <p>Jika titik-titik data mengikuti garis diagonal 45°, data cenderung normal.</p>
+
+                    <h5 style="margin-top: 15px;">3. Box Plot</h5>
+                    <p>Periksa kesimetrisan dan keberadaan outlier.</p>
+                </div>
+
+                <div class="warning-box">
+                    <strong>⚠️ Catatan Penting:</strong><br>
+                    <ul>
+                        <li>Tingkat signifikansi (α) yang umum digunakan adalah 0.05 (5%)</li>
+                        <li>Untuk penelitian medis atau safety critical, kadang digunakan α = 0.01</li>
+                        <li>Uji normalitas sensitif terhadap ukuran sampel - sampel sangat besar cenderung menolak normalitas</li>
+                        <li>Selalu kombinasikan metode statistik dengan visualisasi grafis</li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h4 style="color: #667eea;">Contoh Interpretasi:</h4>
+                    <p style="background: #f0f0f0; padding: 15px; border-radius: 8px; margin-top: 10px;">
+                        <strong>Hasil Uji Shapiro-Wilk:</strong><br>
+                        W = 0.985, p-value = 0.342<br><br>
+                        <strong>Interpretasi:</strong><br>
+                        Karena p-value (0.342) > α (0.05), maka kita gagal menolak H₀. Kesimpulannya, data berdistribusi normal pada tingkat signifikansi 5%. Kita dapat melanjutkan dengan analisis statistik parametrik.
+                    </p>
+                </div>
+            </div>
+
+            <div id="demo" class="tab-content">
+                <div class="card">
+                    <h3>🎮 Demo Interaktif - Visualisasi Distribusi</h3>
+                    <p>Klik tombol di bawah untuk membangkitkan data dan melihat visualisasi distribusi normal vs tidak normal!</p>
+                </div>
+
+                <div class="interactive-demo">
+                    <div class="demo-controls">
+                        <button onclick="generateNormalData()">🔄 Data Normal</button>
+                        <button onclick="generateSkewedData()">📊 Data Skewed (Miring)</button>
+                        <button onclick="generateUniformData()">📈 Data Uniform</button>
+                        <button onclick="generateBimodalData()">🎯 Data Bimodal</button>
+                    </div>
+                    <canvas id="distributionChart" width="800" height="400"></canvas>
+                    <div id="statsDisplay" style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabName) {
+            const tabs = document.querySelectorAll('.tab');
+            const contents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => tab.classList.remove('active'));
+            contents.forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        const canvas = document.getElementById('distributionChart');
+        const ctx = canvas.getContext('2d');
+        let currentData = [];
+
+        function drawHistogram(data, title) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const bins = 20;
+            const min = Math.min(...data);
+            const max = Math.max(...data);
+            const binWidth = (max - min) / bins;
+            
+            const histogram = new Array(bins).fill(0);
+            data.forEach(value => {
+                const binIndex = Math.min(Math.floor((value - min) / binWidth), bins - 1);
+                histogram[binIndex]++;
+            });
+            
+            const maxCount = Math.max(...histogram);
+            const barWidth = canvas.width / bins;
+            const heightScale = (canvas.height - 60) / maxCount;
+            
+            ctx.fillStyle = '#667eea';
+            histogram.forEach((count, i) => {
+                const x = i * barWidth;
+                const height = count * heightScale;
+                const y = canvas.height - 40 - height;
+                
+                ctx.fillRect(x, y, barWidth - 2, height);
+            });
+            
+            ctx.fillStyle = '#333';
+            ctx.font = '16px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(title, canvas.width / 2, 25);
+            
+            ctx.fillStyle = '#666';
+            ctx.font = '12px Arial';
+            ctx.fillText(`Min: ${min.toFixed(2)}`, 50, canvas.height - 10);
+            ctx.fillText(`Max: ${max.toFixed(2)}`, canvas.width - 50, canvas.height - 10);
+        }
+
+        function calculateStats(data) {
+            const n = data.length;
+            const mean = data.reduce((a, b) => a + b, 0) / n;
+            const variance = data.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / n;
+            const stdDev = Math.sqrt(variance);
+            
+            const sorted = [...data].sort((a, b) => a - b);
+            const median = n % 2 === 0 
+                ? (sorted[n/2 - 1] + sorted[n/2]) / 2 
+                : sorted[Math.floor(n/2)];
+            
+            const skewness = data.reduce((a, b) => a + Math.pow((b - mean) / stdDev, 3), 0) / n;
+            
+            return { mean, median, stdDev, skewness, n };
+        }
+
+        function displayStats(stats, distributionType) {
+            const statsDiv = document.getElementById('statsDisplay');
+            let interpretation = '';
+            
+            if (Math.abs(stats.skewness) < 0.5) {
+                interpretation = '✅ Data cenderung simetris (mendekati normal)';
+            } else if (stats.skewness > 0.5) {
+                interpretation = '⚠️ Data miring ke kanan (positively skewed)';
+            } else {
+                interpretation = '⚠️ Data miring ke kiri (negatively skewed)';
+            }
+            
+            statsDiv.innerHTML = `
+                <h4 style="color: #667eea; margin-bottom: 10px;">📈 Statistik Deskriptif</h4>
+                <p><strong>Tipe Distribusi:</strong> ${distributionType}</p>
+                <p><strong>Jumlah Data (n):</strong> ${stats.n}</p>
+                <p><strong>Mean (Rata-rata):</strong> ${stats.mean.toFixed(3)}</p>
+                <p><strong>Median:</strong> ${stats.median.toFixed(3)}</p>
+                <p><strong>Standar Deviasi:</strong> ${stats.stdDev.toFixed(3)}</p>
+                <p><strong>Skewness (Kemencengan):</strong> ${stats.skewness.toFixed(3)}</p>
+                <p style="margin-top: 10px; padding: 10px; background: #d1ecf1; border-radius: 5px;">
+                    <strong>Interpretasi:</strong> ${interpretation}
+                </p>
+            `;
+        }
+
+        function generateNormalData() {
+            currentData = [];
+            for (let i = 0; i < 1000; i++) {
+                let u1 = Math.random();
+                let u2 = Math.random();
+                let z = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+                currentData.push(z * 2 + 50);
+            }
+            drawHistogram(currentData, 'Distribusi Normal');
+            const stats = calculateStats(currentData);
+            displayStats(stats, 'Normal (Gaussian)');
+        }
+
+        function generateSkewedData() {
+            currentData = [];
+            for (let i = 0; i < 1000; i++) {
+                let u = Math.random();
+                currentData.push(Math.pow(u, 0.5) * 100);
+            }
+            drawHistogram(currentData, 'Distribusi Skewed (Miring Kanan)');
+            const stats = calculateStats(currentData);
+            displayStats(stats, 'Positively Skewed');
+        }
+
+        function generateUniformData() {
+            currentData = [];
+            for (let i = 0; i < 1000; i++) {
+                currentData.push(Math.random() * 100);
+            }
+            drawHistogram(currentData, 'Distribusi Uniform');
+            const stats = calculateStats(currentData);
+            displayStats(stats, 'Uniform');
+        }
+
+        function generateBimodalData() {
+            currentData = [];
+            for (let i = 0; i < 500; i++) {
+                let u1 = Math.random();
+                let u2 = Math.random();
+                let z = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+                currentData.push(z * 1.5 + 35);
+            }
+            for (let i = 0; i < 500; i++) {
+                let u1 = Math.random();
+                let u2 = Math.random();
+                let z = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+                currentData.push(z * 1.5 + 65);
+            }
+            drawHistogram(currentData, 'Distribusi Bimodal (Dua Puncak)');
+            const stats = calculateStats(currentData);
+            displayStats(stats, 'Bimodal');
+        }
+
+        generateNormalData();
+    </script>
+</body>
+</html>
