@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flowchart Uji Statistik</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        .content {
+            padding: 50px 40px;
+        }
+
+        .flowchart-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .node {
+            position: relative;
+            padding: 25px 40px;
+            border-radius: 15px;
+            text-align: center;
+            font-weight: 600;
+            color: white;
+            min-width: 250px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+            animation: fadeInDown 0.6s ease;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .node:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+        }
+
+        .start-node {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            font-size: 1.2em;
+        }
+
+        .test-node {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            font-size: 1.3em;
+        }
+
+        .decision-node {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            border-radius: 50%;
+            width: 150px;
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4em;
+        }
+
+        .result-node {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            font-size: 1.2em;
+        }
+
+        .arrow {
+            width: 4px;
+            height: 60px;
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            margin: 0 auto;
+        }
+
+        .arrow::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 12px solid transparent;
+            border-right: 12px solid transparent;
+            border-top: 15px solid #764ba2;
+        }
+
+        .branch-container {
+            display: flex;
+            justify-content: center;
+            gap: 100px;
+            width: 100%;
+            margin: 30px 0;
+        }
+
+        .branch {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .branch-arrow {
+            width: 4px;
+            height: 80px;
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+        }
+
+        .branch-arrow::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 12px solid transparent;
+            border-right: 12px solid transparent;
+            border-top: 15px solid #764ba2;
+        }
+
+        .info-section {
+            background: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 100%);
+            padding: 30px;
+            border-radius: 15px;
+            margin: 40px 0;
+        }
+
+        .info-section h2 {
+            color: #667eea;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 25px;
+        }
+
+        .info-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 5px solid #667eea;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .info-card h3 {
+            color: #764ba2;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .info-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .info-card li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .info-card li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #43e97b;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .legend {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-top: 30px;
+        }
+
+        .legend h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 12px 0;
+        }
+
+        .legend-box {
+            width: 60px;
+            height: 40px;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+        }
+
+        .legend-start {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .legend-test {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .legend-decision {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+        }
+
+        .legend-result {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        @media (max-width: 768px) {
+            .branch-container {
+                flex-direction: column;
+                gap: 30px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .content {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Flowchart Pemilihan Uji Statistik</h1>
+            <p>Panduan Memilih Uji yang Tepat untuk 1 Sampel</p>
+        </div>
+
+        <div class="content">
+            <div class="flowchart-container">
+                <!-- Start Node -->
+                <div class="node start-node">
+                    Pengumpulan Nilai<br>1 Sampel
+                </div>
+
+                <!-- Arrow -->
+                <div class="arrow"></div>
+
+                <!-- Test Node -->
+                <div class="node test-node">
+                    Uji Normal
+                </div>
+
+                <!-- Arrow -->
+                <div class="arrow"></div>
+
+                <!-- Branch Container -->
+                <div class="branch-container">
+                    <!-- Left Branch (Ya) -->
+                    <div class="branch">
+                        <div class="node decision-node">
+                            Ya
+                        </div>
+                        <div class="branch-arrow"></div>
+                        <div class="node result-node">
+                            Uji t<br>1 Sampel
+                        </div>
+                    </div>
+
+                    <!-- Right Branch (Tidak) -->
+                    <div class="branch">
+                        <div class="node decision-node">
+                            Tidak
+                        </div>
+                        <div class="branch-arrow"></div>
+                        <div class="node result-node">
+                            Uji Wilcoxon<br>1 Sampel
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Info Section -->
+            <div class="info-section">
+                <h2>📖 Penjelasan Alur Keputusan</h2>
+                
+                <div class="info-grid">
+                    <div class="info-card">
+                        <h3>🎯 Langkah 1: Pengumpulan Data</h3>
+                        <ul>
+                            <li>Kumpulkan data dari 1 sampel penelitian</li>
+                            <li>Pastikan data terukur dengan baik</li>
+                            <li>Catat semua nilai secara lengkap</li>
+                            <li>Periksa outlier atau data anomali</li>
+                        </ul>
+                    </div>
+
+                    <div class="info-card">
+                        <h3>🔍 Langkah 2: Uji Normalitas</h3>
+                        <ul>
+                            <li>Gunakan Shapiro-Wilk atau Kolmogorov-Smirnov</li>
+                            <li>Cek nilai p-value (α = 0.05)</li>
+                            <li>Lihat histogram dan Q-Q plot</li>
+                            <li>Tentukan distribusi data</li>
+                        </ul>
+                    </div>
+
+                    <div class="info-card">
+                        <h3>✅ Jika Data Normal (Ya)</h3>
+                        <ul>
+                            <li>Gunakan <strong>Uji t 1 Sampel</strong></li>
+                            <li>Uji parametrik yang kuat</li>
+                            <li>Membandingkan mean dengan nilai standar</li>
+                            <li>Asumsi: data berdistribusi normal</li>
+                        </ul>
+                    </div>
+
+                    <div class="info-card">
+                        <h3>❌ Jika Data Tidak Normal (Tidak)</h3>
+                        <ul>
+                            <li>Gunakan <strong>Uji Wilcoxon 1 Sampel</strong></li>
+                            <li>Uji non-parametrik alternatif</li>
+                            <li>Membandingkan median dengan nilai standar</li>
+                            <li>Tidak mensyaratkan distribusi normal</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Info -->
+            <div class="info-section">
+                <h2>💡 Informasi Penting</h2>
+                
+                <div class="info-card" style="margin-top: 20px;">
+                    <h3>🎓 Kapan Menggunakan Uji 1 Sampel?</h3>
+                    <ul>
+                        <li>Membandingkan rata-rata/median sampel dengan nilai standar atau teoritis</li>
+                        <li>Contoh: Apakah rata-rata tinggi badan siswa = 165 cm?</li>
+                        <li>Contoh: Apakah nilai ujian berbeda dari standar kelulusan 75?</li>
+                        <li>Hanya memiliki 1 kelompok sampel untuk dianalisis</li>
+                    </ul>
+                </div>
+
+                <div class="legend">
+                    <h3>🎨 Legenda Flowchart</h3>
+                    <div class="legend-item">
+                        <div class="legend-box legend-start"></div>
+                        <span><strong>Kotak Merah Muda:</strong> Langkah Awal (Input/Start)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-box legend-test"></div>
+                        <span><strong>Kotak Biru:</strong> Proses Pengujian</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-box legend-decision"></div>
+                        <span><strong>Bulat Hijau:</strong> Keputusan (Ya/Tidak)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-box legend-result"></div>
+                        <span><strong>Kotak Kuning:</strong> Hasil/Uji yang Dipilih</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
