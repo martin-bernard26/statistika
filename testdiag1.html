@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Diagnosis - Uji 1 Sampel Statistik</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+
+        .form-section {
+            padding: 30px;
+        }
+
+        .identity-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        input[type="text"],
+        input[type="email"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .question-block {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .question-block h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .option-label:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        input[type="radio"] {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .option-label input[type="radio"]:checked + span {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .option-label:has(input[type="radio"]:checked) {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result-section {
+            display: none;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .result-section.show {
+            display: block;
+        }
+
+        .score-display {
+            font-size: 48px;
+            font-weight: bold;
+            color: #667eea;
+            margin: 20px 0;
+        }
+
+        .result-message {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .required {
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Test Diagnosis Statistik</h1>
+            <p>Uji 1 Sampel Data Nilai</p>
+        </div>
+
+        <form id="testForm" class="form-section">
+            <div class="identity-section">
+                <h2 style="margin-bottom: 20px; color: #333;">Data Peserta</h2>
+                <div class="form-group">
+                    <label>Nama Lengkap <span class="required">*</span></label>
+                    <input type="text" id="nama" name="nama" required>
+                    <span class="error-message" id="error-nama">Nama harus diisi</span>
+                </div>
+                <div class="form-group">
+                    <label>NIM/NPM <span class="required">*</span></label>
+                    <input type="text" id="nim" name="nim" required>
+                    <span class="error-message" id="error-nim">NIM/NPM harus diisi</span>
+                </div>
+                <div class="form-group">
+                    <label>Email <span class="required">*</span></label>
+                    <input type="email" id="email" name="email" required>
+                    <span class="error-message" id="error-email">Email harus diisi dengan benar</span>
+                </div>
+            </div>
+
+            <h2 style="margin-bottom: 20px; color: #333;">Soal Test</h2>
+
+            <div class="question-block">
+                <h3>1. Apa tujuan utama dari uji satu sampel (one-sample test)?</h3>
+                <div class="options">
+                    <label class="option-label">
+                        <input type="radio" name="q1" value="A" required>
+                        <span>A. Membandingkan dua kelompok data</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q1" value="B">
+                        <span>B. Menguji apakah rata-rata sampel berbeda dengan nilai tertentu</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q1" value="C">
+                        <span>C. Menghitung korelasi antar variabel</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q1" value="D">
+                        <span>D. Menentukan distribusi data</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="question-block">
+                <h3>2. Uji statistik apa yang digunakan untuk uji satu sampel ketika data berdistribusi normal dan standar deviasi populasi tidak diketahui?</h3>
+                <div class="options">
+                    <label class="option-label">
+                        <input type="radio" name="q2" value="A" required>
+                        <span>A. Uji Z</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q2" value="B">
+                        <span>B. Uji T (t-test)</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q2" value="C">
+                        <span>C. Uji Chi-Square</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q2" value="D">
+                        <span>D. Uji ANOVA</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="question-block">
+                <h3>3. Jika nilai signifikansi (p-value) yang diperoleh adalah 0.03 dengan tingkat kepercayaan 95% (α = 0.05), maka keputusannya adalah?</h3>
+                <div class="options">
+                    <label class="option-label">
+                        <input type="radio" name="q3" value="A" required>
+                        <span>A. Terima H0 (hipotesis nol)</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q3" value="B">
+                        <span>B. Tolak H0 (hipotesis nol)</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q3" value="C">
+                        <span>C. Tidak dapat disimpulkan</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q3" value="D">
+                        <span>D. Ulangi pengujian</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="question-block">
+                <h3>4. Hipotesis nol (H0) dalam uji satu sampel t-test menyatakan bahwa?</h3>
+                <div class="options">
+                    <label class="option-label">
+                        <input type="radio" name="q4" value="A" required>
+                        <span>A. Rata-rata sampel sama dengan rata-rata populasi</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q4" value="B">
+                        <span>B. Rata-rata sampel tidak sama dengan rata-rata populasi</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q4" value="C">
+                        <span>C. Standar deviasi sampel sama dengan standar deviasi populasi</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q4" value="D">
+                        <span>D. Data berdistribusi normal</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="question-block">
+                <h3>5. Derajat kebebasan (degree of freedom) untuk uji t satu sampel dengan n = 25 adalah?</h3>
+                <div class="options">
+                    <label class="option-label">
+                        <input type="radio" name="q5" value="A" required>
+                        <span>A. 23</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q5" value="B">
+                        <span>B. 24</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q5" value="C">
+                        <span>C. 25</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q5" value="D">
+                        <span>D. 26</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="question-block">
+                <h3>6. Asumsi apa yang harus dipenuhi untuk menggunakan uji t satu sampel?</h3>
+                <div class="options">
+                    <label class="option-label">
+                        <input type="radio" name="q6" value="A" required>
+                        <span>A. Data harus kategorikal</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q6" value="B">
+                        <span>B. Data harus berdistribusi normal atau sampel berukuran besar</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q6" value="C">
+                        <span>C. Data harus memiliki varians yang sama</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q6" value="D">
+                        <span>D. Semua jawaban benar</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="question-block">
+                <h3>7. Jika hasil uji normalitas menunjukkan data tidak berdistribusi normal, uji alternatif apa yang dapat digunakan untuk uji satu sampel?</h3>
+                <div class="options">
+                    <label class="option-label">
+                        <input type="radio" name="q7" value="A" required>
+                        <span>A. Uji Mann-Whitney</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q7" value="B">
+                        <span>B. Uji Wilcoxon Signed Rank</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q7" value="C">
+                        <span>C. Uji Kruskal-Wallis</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q7" value="D">
+                        <span>D. Uji Friedman</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="question-block">
+                <h3>8. Nilai t hitung yang diperoleh adalah 2.5 dengan t tabel (α = 0.05, two-tailed) adalah 2.045. Kesimpulannya adalah?</h3>
+                <div class="options">
+                    <label class="option-label">
+                        <input type="radio" name="q8" value="A" required>
+                        <span>A. Terima H0 karena t hitung < t tabel</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q8" value="B">
+                        <span>B. Tolak H0 karena t hitung > t tabel</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q8" value="C">
+                        <span>C. Tidak dapat disimpulkan</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q8" value="D">
+                        <span>D. Perlu uji tambahan</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="question-block">
+                <h3>9. Dalam konteks uji hipotesis, apa yang dimaksud dengan error tipe I?</h3>
+                <div class="options">
+                    <label class="option-label">
+                        <input type="radio" name="q9" value="A" required>
+                        <span>A. Menerima H0 ketika H0 sebenarnya salah</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q9" value="B">
+                        <span>B. Menolak H0 ketika H0 sebenarnya benar</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q9" value="C">
+                        <span>C. Menggunakan uji yang salah</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q9" value="D">
+                        <span>D. Kesalahan dalam menghitung statistik</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="question-block">
+                <h3>10. Rumus untuk menghitung nilai t pada uji t satu sampel adalah?</h3>
+                <div class="options">
+                    <label class="option-label">
+                        <input type="radio" name="q10" value="A" required>
+                        <span>A. t = (x̄ - μ) / (s / √n)</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q10" value="B">
+                        <span>B. t = (x̄ - μ) × (s / √n)</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q10" value="C">
+                        <span>C. t = (μ - x̄) / (s × √n)</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q10" value="D">
+                        <span>D. t = (x̄ + μ) / (s / n)</span>
+                    </label>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">Kirim Jawaban</button>
+        </form>
+
+        <div class="result-section" id="resultSection">
+            <h2>🎉 Test Selesai!</h2>
+            <div class="score-display" id="scoreDisplay">0/10</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="result-message" id="resultMessage"></div>
+            <p style="color: #666; margin-top: 20px;">Hasil test Anda akan dikirim ke Google Sheets.</p>
+        </div>
+    </div>
+
+    <script>
+        // Kunci jawaban
+        const answers = {
+            q1: 'B',
+            q2: 'B',
+            q3: 'B',
+            q4: 'A',
+            q5: 'B',
+            q6: 'B',
+            q7: 'B',
+            q8: 'B',
+            q9: 'B',
+            q10: 'A'
+        };
+
+        const form = document.getElementById('testForm');
+        const resultSection = document.getElementById('resultSection');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const progressFill = document.getElementById('progressFill');
+        const resultMessage = document.getElementById('resultMessage');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Validasi form
+            const nama = document.getElementById('nama').value.trim();
+            const nim = document.getElementById('nim').value.trim();
+            const email = document.getElementById('email').value.trim();
+
+            if (!nama || !nim || !email) {
+                alert('Mohon lengkapi semua data identitas!');
+                return;
+            }
+
+            // Hitung skor
+            let score = 0;
+            const formData = new FormData(form);
+            
+            for (let i = 1; i <= 10; i++) {
+                const answer = formData.get(`q${i}`);
+                if (answer === answers[`q${i}`]) {
+                    score++;
+                }
+            }
+
+            // Tampilkan hasil
+            const percentage = (score / 10) * 100;
+            scoreDisplay.textContent = `${score}/10`;
+            progressFill.style.width = `${percentage}%`;
+
+            if (score >= 8) {
+                resultMessage.textContent = '🌟 Sangat Baik! Pemahaman Anda tentang uji satu sampel sangat bagus!';
+            } else if (score >= 6) {
+                resultMessage.textContent = '👍 Baik! Anda memiliki pemahaman yang cukup baik.';
+            } else if (score >= 4) {
+                resultMessage.textContent = '📚 Cukup. Masih perlu belajar lebih dalam lagi.';
+            } else {
+                resultMessage.textContent = '💪 Perlu belajar lebih giat. Jangan menyerah!';
+            }
+
+            form.style.display = 'none';
+            resultSection.classList.add('show');
+
+            // Kirim ke Google Form (ganti dengan URL Google Form Anda)
+            // Format: https://docs.google.com/forms/d/e/FORM_ID/formResponse
+            const googleFormURL = 'https://docs.google.com/forms/u/0/d/e/1FAIpQLScc7e_DG3BelBgeYoBfs2621TRKVzZYPnfC0bvodWew1gDXhw/formResponse';
+            
+            // Sesuaikan entry ID dengan form Anda
+            const data = new URLSearchParams();
+            data.append('entry.1129128501', nama);  // Ganti XXXXXX dengan entry ID untuk nama
+            data.append('entry.217175574', nim);   // Ganti YYYYYY dengan entry ID untuk NIM
+            data.append('entry.535014054', email); // Ganti ZZZZZZ dengan entry ID untuk email
+            data.append('entry.674180849', score); // Ganti AAAAAA dengan entry ID untuk skor
+            data.append('entry.1224021639', percentage.toFixed(2)); // Ganti dengan entry ID untuk persentase
+
+            // Kirim data (optional - uncomment jika sudah setup Google Form)
+            
+            fetch(googleFormURL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: data.toString()
+            }).then(() => {
+                console.log('Data berhasil dikirim ke Google Sheets');
+            }).catch(error => {
+                console.error('Error:', error);
+            });
+           
+        });
+    </script>
+</body>
+</html>
