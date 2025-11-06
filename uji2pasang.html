@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flowchart Uji Statistik 2 Sampel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+
+        .flowchart {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .node {
+            background: #2c3e50;
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px;
+            text-align: center;
+            min-width: 280px;
+            max-width: 400px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        .node:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            background: #34495e;
+        }
+
+        .node.active {
+            background: #667eea;
+            transform: scale(1.05);
+        }
+
+        .start {
+            background: #27ae60;
+            border-radius: 25px;
+        }
+
+        .start:hover {
+            background: #2ecc71;
+        }
+
+        .decision {
+            background: #e74c3c;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .decision:hover {
+            background: #c0392b;
+        }
+
+        .process {
+            background: #3498db;
+        }
+
+        .process:hover {
+            background: #2980b9;
+        }
+
+        .end {
+            background: #f39c12;
+            border-radius: 25px;
+        }
+
+        .end:hover {
+            background: #e67e22;
+        }
+
+        .arrow {
+            font-size: 2em;
+            color: #2c3e50;
+        }
+
+        .branch-container {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            width: 100%;
+            margin: 20px 0;
+        }
+
+        .branch {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .branch-label {
+            background: white;
+            color: #2c3e50;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            border: 2px solid #2c3e50;
+            font-size: 0.9em;
+        }
+
+        .explanation {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            border-left: 5px solid #667eea;
+            display: none;
+        }
+
+        .explanation.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .explanation h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .explanation p {
+            line-height: 1.8;
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        .explanation ul {
+            margin-left: 20px;
+            line-height: 1.8;
+        }
+
+        .explanation ul li {
+            margin-bottom: 10px;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 4px solid #2196f3;
+        }
+
+        .info-box h4 {
+            color: #1976d2;
+            margin-bottom: 10px;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .legend-box {
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .branch-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Flowchart Uji Statistik untuk 2 Sampel Berpasangan</h1>
+        
+        <div class="flowchart">
+            <div class="node start" data-info="start">
+                Pengumpulan Data 2 Sampel<br>
+                (Sebelum dan Sesudah Perlakuan)
+            </div>
+
+            <div class="arrow">↓</div>
+
+            <div class="node decision" data-info="normality">
+                Uji Normalitas Selisih dari data<br>
+                sebelumnya dan sesudahnya
+            </div>
+
+            <div class="arrow">↓</div>
+
+            <div class="branch-container">
+                <div class="branch">
+                    <div class="branch-label">Ya</div>
+                    <div class="arrow">↓</div>
+                    <div class="node process" data-info="paired-t">
+                        Uji t<br>
+                        berpasangan
+                    </div>
+                </div>
+
+                <div class="branch">
+                    <div class="branch-label">Tidak</div>
+                    <div class="arrow">↓</div>
+                    <div class="node end" data-info="wilcoxon">
+                        Uji Wilcoxon<br>
+                        2 sampel berpasangan
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-box" style="background: #27ae60;"></div>
+                <span>Start</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box" style="background: #e74c3c;"></div>
+                <span>Keputusan</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box" style="background: #3498db;"></div>
+                <span>Proses (Parametrik)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-box" style="background: #f39c12;"></div>
+                <span>Proses (Non-parametrik)</span>
+            </div>
+        </div>
+
+        <div id="explanation" class="explanation"></div>
+    </div>
+
+    <script>
+        const explanations = {
+            start: {
+                title: "1. Pengumpulan Data 2 Sampel (Sebelum dan Sesudah Perlakuan)",
+                content: `
+                    <p><strong>Deskripsi:</strong> Tahap awal dimana kita mengumpulkan data dari dua pengukuran pada subjek yang sama.</p>
+                    
+                    <p><strong>Karakteristik:</strong></p>
+                    <ul>
+                        <li><strong>Data Berpasangan:</strong> Setiap subjek diukur dua kali (sebelum dan sesudah perlakuan/intervensi)</li>
+                        <li><strong>Subjek yang Sama:</strong> Pengukuran dilakukan pada individu atau unit yang sama</li>
+                        <li><strong>Tujuan:</strong> Mengevaluasi efek dari suatu perlakuan atau intervensi</li>
+                    </ul>
+
+                    <div class="info-box">
+                        <h4>Contoh Kasus:</h4>
+                        <ul>
+                            <li>Mengukur berat badan pasien sebelum dan sesudah program diet</li>
+                            <li>Menguji nilai siswa sebelum dan sesudah mengikuti pelatihan</li>
+                            <li>Mengukur tekanan darah sebelum dan sesudah pemberian obat</li>
+                            <li>Mengevaluasi kepuasan pelanggan sebelum dan sesudah perbaikan layanan</li>
+                        </ul>
+                    </div>
+                `
+            },
+            normality: {
+                title: "2. Uji Normalitas Selisih Data",
+                content: `
+                    <p><strong>Deskripsi:</strong> Langkah krusial untuk menentukan jenis uji statistik yang tepat.</p>
+                    
+                    <p><strong>Yang Diuji:</strong> Normalitas dari <em>selisih</em> (difference) antara pengukuran sebelum dan sesudah, bukan normalitas masing-masing kelompok.</p>
+
+                    <p><strong>Metode Uji Normalitas:</strong></p>
+                    <ul>
+                        <li><strong>Shapiro-Wilk Test:</strong> Cocok untuk sampel kecil (n < 50)</li>
+                        <li><strong>Kolmogorov-Smirnov Test:</strong> Untuk sampel besar (n ≥ 50)</li>
+                        <li><strong>Anderson-Darling Test:</strong> Lebih sensitif pada ekor distribusi</li>
+                        <li><strong>Visual (Q-Q Plot):</strong> Pemeriksaan grafis distribusi data</li>
+                    </ul>
+
+                    <div class="info-box">
+                        <h4>Hipotesis Uji Normalitas:</h4>
+                        <ul>
+                            <li><strong>H₀:</strong> Data selisih berdistribusi normal</li>
+                            <li><strong>H₁:</strong> Data selisih tidak berdistribusi normal</li>
+                            <li><strong>Keputusan:</strong> Jika p-value > 0.05 → Data normal (gunakan uji parametrik)</li>
+                            <li><strong>Keputusan:</strong> Jika p-value ≤ 0.05 → Data tidak normal (gunakan uji non-parametrik)</li>
+                        </ul>
+                    </div>
+                `
+            },
+            "paired-t": {
+                title: "3a. Uji t Berpasangan (Paired t-Test) - UJI PARAMETRIK",
+                content: `
+                    <p><strong>Kapan Digunakan:</strong> Ketika data selisih berdistribusi normal.</p>
+                    
+                    <p><strong>Asumsi:</strong></p>
+                    <ul>
+                        <li>Data berpasangan (dependent samples)</li>
+                        <li>Selisih data berdistribusi normal</li>
+                        <li>Skala pengukuran interval atau rasio</li>
+                        <li>Tidak ada outlier ekstrem</li>
+                    </ul>
+
+                    <p><strong>Hipotesis:</strong></p>
+                    <ul>
+                        <li><strong>H₀:</strong> Tidak ada perbedaan rata-rata antara sebelum dan sesudah (μ₁ = μ₂)</li>
+                        <li><strong>H₁:</strong> Ada perbedaan rata-rata antara sebelum dan sesudah (μ₁ ≠ μ₂)</li>
+                    </ul>
+
+                    <div class="info-box">
+                        <h4>Rumus Uji t Berpasangan:</h4>
+                        <p><strong>t = d̄ / (sd / √n)</strong></p>
+                        <p>Dimana:</p>
+                        <ul>
+                            <li>d̄ = rata-rata selisih</li>
+                            <li>sd = standar deviasi selisih</li>
+                            <li>n = jumlah pasangan</li>
+                        </ul>
+                        <p><strong>Interpretasi:</strong> Jika p-value < 0.05, maka tolak H₀ (ada perbedaan signifikan)</p>
+                    </div>
+
+                    <div class="info-box">
+                        <h4>Kelebihan:</h4>
+                        <ul>
+                            <li>Lebih powerful (sensitif) untuk mendeteksi perbedaan</li>
+                            <li>Menggunakan semua informasi dari data</li>
+                            <li>Memberikan estimasi yang lebih presisi</li>
+                        </ul>
+                    </div>
+                `
+            },
+            wilcoxon: {
+                title: "3b. Uji Wilcoxon (Wilcoxon Signed-Rank Test) - UJI NON-PARAMETRIK",
+                content: `
+                    <p><strong>Kapan Digunakan:</strong> Ketika data selisih TIDAK berdistribusi normal.</p>
+                    
+                    <p><strong>Karakteristik:</strong></p>
+                    <ul>
+                        <li>Alternatif non-parametrik dari uji t berpasangan</li>
+                        <li>Tidak memerlukan asumsi normalitas</li>
+                        <li>Menggunakan ranking (peringkat) data</li>
+                        <li>Robust terhadap outlier</li>
+                    </ul>
+
+                    <p><strong>Cara Kerja:</strong></p>
+                    <ul>
+                        <li>Hitung selisih antara sebelum dan sesudah</li>
+                        <li>Ambil nilai absolut dari selisih</li>
+                        <li>Ranking selisih dari terkecil ke terbesar</li>
+                        <li>Kembalikan tanda positif/negatif pada ranking</li>
+                        <li>Jumlahkan ranking positif dan negatif</li>
+                        <li>Gunakan nilai terkecil sebagai statistik uji</li>
+                    </ul>
+
+                    <p><strong>Hipotesis:</strong></p>
+                    <ul>
+                        <li><strong>H₀:</strong> Tidak ada perbedaan median antara sebelum dan sesudah</li>
+                        <li><strong>H₁:</strong> Ada perbedaan median antara sebelum dan sesudah</li>
+                    </ul>
+
+                    <div class="info-box">
+                        <h4>Kelebihan:</h4>
+                        <ul>
+                            <li>Tidak memerlukan asumsi distribusi normal</li>
+                            <li>Tahan terhadap outlier (data ekstrem)</li>
+                            <li>Dapat digunakan untuk data ordinal</li>
+                            <li>Cocok untuk sampel kecil</li>
+                        </ul>
+                    </div>
+
+                    <div class="info-box">
+                        <h4>Interpretasi:</h4>
+                        <p>Jika p-value < 0.05, maka tolak H₀ (ada perbedaan signifikan antara sebelum dan sesudah perlakuan)</p>
+                    </div>
+                `
+            }
+        };
+
+        const nodes = document.querySelectorAll('.node');
+        const explanationDiv = document.getElementById('explanation');
+
+        nodes.forEach(node => {
+            node.addEventListener('click', function() {
+                const info = this.getAttribute('data-info');
+                
+                // Remove active class from all nodes
+                nodes.forEach(n => n.classList.remove('active'));
+                
+                // Add active class to clicked node
+                this.classList.add('active');
+                
+                // Show explanation
+                if (explanations[info]) {
+                    explanationDiv.innerHTML = `
+                        <h3>${explanations[info].title}</h3>
+                        ${explanations[info].content}
+                    `;
+                    explanationDiv.classList.add('show');
+                    explanationDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            });
+        });
+
+        // Show start explanation by default
+        document.querySelector('[data-info="start"]').click();
+    </script>
+</body>
+</html>
