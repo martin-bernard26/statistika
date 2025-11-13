@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flowchart Uji Statistik</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .flowchart {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .box {
+            padding: 20px 30px;
+            border-radius: 15px;
+            font-weight: 600;
+            font-size: 16px;
+            text-align: center;
+            position: relative;
+            min-width: 280px;
+            transition: all 0.3s ease;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .start-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .decision-box {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(245, 87, 108, 0.4);
+        }
+
+        .process-box {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4);
+        }
+
+        .end-box {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(67, 233, 123, 0.4);
+            padding: 18px 25px;
+            font-size: 15px;
+        }
+
+        .arrow {
+            width: 4px;
+            height: 40px;
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+            border-radius: 2px;
+        }
+
+        .arrow::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 12px solid #764ba2;
+        }
+
+        .split-container {
+            display: flex;
+            gap: 40px;
+            justify-content: center;
+            align-items: flex-start;
+            width: 100%;
+            position: relative;
+        }
+
+        .branch {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            flex: 1;
+            max-width: 350px;
+        }
+
+        .label-box {
+            background: #fff;
+            border: 3px solid #667eea;
+            color: #667eea;
+            padding: 8px 20px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 14px;
+            box-shadow: 0 3px 10px rgba(102, 126, 234, 0.2);
+        }
+
+        .connector-line {
+            position: relative;
+        }
+
+        .connector-line::before {
+            content: '';
+            position: absolute;
+            width: 3px;
+            height: 30px;
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            left: 50%;
+            transform: translateX(-50%);
+            top: -30px;
+        }
+
+        .title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        @media (max-width: 768px) {
+            .split-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .box {
+                min-width: 240px;
+                font-size: 14px;
+                padding: 16px 24px;
+            }
+
+            .container {
+                padding: 30px 20px;
+            }
+
+            .title {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Alur Uji Statistik 2 Sampel Independen</h1>
+        
+        <div class="flowchart">
+            <!-- Start -->
+            <div class="box start-box">Pengumpulan nilai 2 sampel Independen</div>
+            <div class="arrow"></div>
+            
+            <!-- Decision 1 -->
+            <div class="box decision-box">Uji normal</div>
+            <div class="arrow"></div>
+            
+            <!-- Split into two branches -->
+            <div class="split-container">
+                <!-- Left Branch (Ya) -->
+                <div class="branch">
+                    <div class="label-box">ya</div>
+                    <div class="box decision-box">Uji homogen</div>
+                    <div class="arrow"></div>
+                    
+                    <div class="split-container" style="gap: 20px;">
+                        <div class="branch">
+                            <div class="label-box">ya</div>
+                            <div class="box end-box">Uji t 2 sampel Independen</div>
+                        </div>
+                        
+                        <div class="branch">
+                            <div class="label-box">Tidak</div>
+                            <div class="box end-box">Uji t' (Uji welch's t-test)</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right Branch (Tidak) -->
+                <div class="branch">
+                    <div class="label-box">Tidak</div>
+                    <div class="box process-box">Uji Rata-rata Mann-Whitney</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
