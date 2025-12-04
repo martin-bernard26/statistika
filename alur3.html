@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decision Tree - Pemilihan Uji Statistik</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 40px;
+            font-size: 28px;
+        }
+
+        .tree {
+            position: relative;
+            padding: 20px;
+        }
+
+        .node {
+            position: relative;
+            margin: 30px 0;
+            padding-left: 40px;
+        }
+
+        .node::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: #cbd5e0;
+        }
+
+        .question-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            font-weight: 600;
+            font-size: 18px;
+            position: relative;
+        }
+
+        .question-box::before {
+            content: '🤔';
+            position: absolute;
+            left: -30px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 24px;
+            background: white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .branch {
+            position: relative;
+            margin: 25px 0;
+            padding-left: 50px;
+        }
+
+        .branch::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: #cbd5e0;
+        }
+
+        .branch-label {
+            display: inline-block;
+            background: #48bb78;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(72, 187, 120, 0.3);
+            font-size: 14px;
+        }
+
+        .branch-label.no {
+            background: #f56565;
+            box-shadow: 0 2px 8px rgba(245, 101, 101, 0.3);
+        }
+
+        .result-box {
+            background: white;
+            border: 3px solid #4299e1;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 10px;
+            box-shadow: 0 4px 12px rgba(66, 153, 225, 0.2);
+        }
+
+        .result-box.anova-classic {
+            border-color: #48bb78;
+            background: linear-gradient(135deg, #f0fff4 0%, #c6f6d5 100%);
+        }
+
+        .result-box.welch {
+            border-color: #ed8936;
+            background: linear-gradient(135deg, #fffaf0 0%, #feebc8 100%);
+        }
+
+        .result-box.kruskal {
+            border-color: #9f7aea;
+            background: linear-gradient(135deg, #faf5ff 0%, #e9d8fd 100%);
+        }
+
+        .result-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #2d3748;
+        }
+
+        .result-title.anova-classic {
+            color: #22543d;
+        }
+
+        .result-title.welch {
+            color: #7c2d12;
+        }
+
+        .result-title.kruskal {
+            color: #44337a;
+        }
+
+        .result-description {
+            color: #4a5568;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .icon {
+            display: inline-block;
+            margin-right: 8px;
+            font-size: 20px;
+        }
+
+        .sub-question {
+            background: #edf2f7;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 4px solid #4299e1;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .question-box {
+                font-size: 16px;
+                padding: 15px 20px;
+            }
+
+            .node {
+                padding-left: 25px;
+            }
+
+            .branch {
+                padding-left: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌳 Decision Tree: Pemilihan Uji Statistik</h1>
+        
+        <div class="tree">
+            <!-- Root Question -->
+            <div class="node">
+                <div class="question-box">
+                    Apakah data berdistribusi NORMAL? (Uji Shapiro-Wilk)
+                </div>
+
+                <!-- Branch YA - Normal -->
+                <div class="branch">
+                    <span class="branch-label">✓ YA</span>
+                    
+                    <div class="sub-question">
+                        Apakah varians HOMOGEN? (Uji Levene)
+                    </div>
+
+                    <!-- Sub-branch YA - Homogen -->
+                    <div class="branch">
+                        <span class="branch-label">✓ YA</span>
+                        
+                        <div class="result-box anova-classic">
+                            <div class="result-title anova-classic">
+                                <span class="icon">📊</span>
+                                Gunakan ANOVA KLASIK
+                            </div>
+                            <div class="result-description">
+                                Paling powerful jika asumsi terpenuhi
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sub-branch TIDAK - Tidak Homogen -->
+                    <div class="branch">
+                        <span class="branch-label no">✗ TIDAK</span>
+                        
+                        <div class="result-box welch">
+                            <div class="result-title welch">
+                                <span class="icon">⚖️</span>
+                                Gunakan WELCH'S ANOVA
+                            </div>
+                            <div class="result-description">
+                                Robust terhadap heterogenitas varians
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Branch TIDAK - Tidak Normal -->
+                <div class="branch">
+                    <span class="branch-label no">✗ TIDAK</span>
+                    
+                    <div class="result-box kruskal">
+                        <div class="result-title kruskal">
+                            <span class="icon">📈</span>
+                            Gunakan KRUSKAL-WALLIS
+                        </div>
+                        <div class="result-description">
+                            Uji non-parametrik, tidak perlu normalitas
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
